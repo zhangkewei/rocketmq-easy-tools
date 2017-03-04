@@ -23,6 +23,11 @@ public class ToolsDemo {
             public boolean msgHandle(MessageExt msg) {
                 return true;
             }
+        }).addListener(new ConsumerListener() {
+            @Override
+            public boolean msgHandle(MessageExt msg) {
+                return false;
+            }
         }).start();
     }
 }

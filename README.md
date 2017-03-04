@@ -46,5 +46,10 @@ com.zkevin.ToolsDemo<br/>
                 //do something
                 return true;
             }
+        }).addListener(new ConsumerListener() {
+            @Override
+            public boolean msgHandle(MessageExt msg) {
+                return false;
+            }
         }).start();
  </pre>

@@ -1,0 +1,16 @@
+order.producer=ProducerGroupName
+order.consumer=消费组名称|ConsumerGroupName|CommonGroupName<br/>
+order.msgModel=CommonGroupName
+order.mqAddr=127.0.0.1:9876
+cerfication.producer=ProducerGroupName
+cerfication.consumer=CommonGroupName
+cerfication.msgModel=CLUSTERING
+cerfication.mqAddr=127.0.0.1:9876
+order.producer.enable=true
+order.consumer.enable=true
+order.producer.flag=-1
+order.consumer.flag=-1
+consumer.flag=-1
+producer.flag=-1
+java -Dorder.consumer=OrderGroupName  -Dcerfication.consumer=CerficationGroupName -Dconsumer.enable=false -Dconsumer.flag=0 -Dproducer.flag=0 <br/>
+export order_consumer=OrderGroupName cerfication_consumer=CerficationGroupName    consumer_enable=false  consumer_flag=0 producer_flag=0<br/>

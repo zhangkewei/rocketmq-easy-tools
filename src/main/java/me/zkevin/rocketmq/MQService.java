@@ -1,4 +1,4 @@
-package com.zkevin.rocketmq;
+package me.zkevin.rocketmq;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

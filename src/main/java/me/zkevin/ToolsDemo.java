@@ -1,8 +1,8 @@
-package com.zkevin;
+package me.zkevin;
 
 import com.alibaba.rocketmq.common.message.MessageExt;
-import com.zkevin.rocketmq.ConsumerListener;
-import com.zkevin.rocketmq.MQService;
+import me.zkevin.rocketmq.ConsumerListener;
+import me.zkevin.rocketmq.MQService;
 
 /**
  * 客户端调用demo

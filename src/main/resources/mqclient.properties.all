@@ -1,0 +1,13 @@
+mqAddr=ip:port
+topic.mqAddr=ip:port
+
+topic.producer=生产组名称
+topic.producer.enable=true|false  #是否启用
+topic.producer.flag=-1..|默认-1   #发送消息标识
+
+topic.consumer=生产组名称
+topic.consumer.enable=true|false  #是否启用
+topic.consumer.flag=-1..|默认-1   #仅接收指定标识的消息
+topic.msgModel=BROADCASTING||CLUSTERING    #集群消费、广播消费
+
+

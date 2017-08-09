@@ -1,4 +1,4 @@
-package com.zkevin.rocketmq;
+package me.zkevin.rocketmq;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

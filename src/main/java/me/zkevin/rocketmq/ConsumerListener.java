@@ -1,4 +1,4 @@
-package com.zkevin.rocketmq;
+package me.zkevin.rocketmq;
 
 import com.alibaba.rocketmq.common.message.MessageExt;
 /**

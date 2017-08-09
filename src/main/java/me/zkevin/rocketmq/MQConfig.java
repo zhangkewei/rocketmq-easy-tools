@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import me.zkevin.rocketmq.dic.DefaultClientValue;
+import me.zkevin.rocketmq.dic.MQConstants;
 import org.apache.log4j.Logger;
 
 /**
@@ -14,28 +16,29 @@ import org.apache.log4j.Logger;
  * 创建时间：2016年12月3日 下午4:32:01
  * @version
  */
-public abstract class MQConfig {
+public abstract class MQConfig  extends BaseConfig{
 	protected static Logger logger=Logger.getLogger(MQConfig.class);
 	private String nameAddr;
 	private String groupName;
 	private String instanceName;
 	private String configModel;
-	private Boolean enable; 
+	private Boolean enable;
 	private int flag=-1;
 	public MQConfig(String topic,String configModel){
-		nameAddr=getConfig(topic+MQConstants.PROPERTIE_SPLIT.getKey()+MQConstants.NAME_ADDR.getKey(),getConfig(MQConstants.NAME_ADDR.getKey(),""));
+		super(MQConstants.PROPERTIE_FILES_SPLIT.getValue().split(MQConstants.DEFAULT_PROPERTIE_FILES.getValue()), MQConstants.PROPERTIEKEY_APPEND.getValue());
+		nameAddr=getConfig(topic+MQConstants.PROPERTIE_SPLIT.getValue()+MQConstants.CLIENT_NAME_ADDR.getValue(),getConfig(MQConstants.CLIENT_NAME_ADDR.getValue(),""));
 		this.configModel=configModel;
-		this.groupName=getConfig(topic+MQConstants.PROPERTIE_SPLIT.getKey()+configModel,null);
+		this.groupName=getConfig(topic+MQConstants.PROPERTIE_SPLIT.getValue()+configModel,null);
 		if(null==groupName||groupName.trim().isEmpty()){
-			if(configModel.equals(MQConstants.CONFIG_MODEL_CONSUMER.getKey())){
-				groupName=MQConstants.DEFAULT_CONSUMER.getKey();
-			}else if(configModel.equals(MQConstants.CONFIG_MODEL_PRODUCER.getKey())){
-				groupName=MQConstants.DEFAULT_GROUP.getKey();
+			if(configModel.equals(DefaultClientValue.CONFIG_MODEL_CONSUMER.getKey())){
+				groupName=DefaultClientValue.DEFAULT_CONSUMER.getKey();
+			}else if(configModel.equals(DefaultClientValue.CONFIG_MODEL_PRODUCER.getKey())){
+				groupName=DefaultClientValue.DEFAULT_GROUP.getKey();
 			}else{
-				groupName=MQConstants.getDefaultGroup(configModel);
+				groupName=DefaultClientValue.getDefaultGroup(configModel);
 			}
 		}
-		String name=getConfig(topic+MQConstants.PROPERTIE_SPLIT.getKey()+configModel+MQConstants.PROPERTIE_SPLIT.getKey()+MQConstants.MQ_INSTANCE.getKey(),"");
+		String name=getConfig(topic+MQConstants.PROPERTIE_SPLIT.getValue()+configModel+MQConstants.PROPERTIE_SPLIT.getValue()+MQConstants.CLIENT_INSTANCE.getValue(),"");
 		name=null!=name&&!name.isEmpty()?"_"+name:"";
 		try {
 			this.instanceName=StringUrlTools.encoderStr(topic+"_"+configModel+"_"+groupName+name,null);
@@ -43,10 +46,10 @@ public abstract class MQConfig {
 			logger.error("初始化"+configModel+" instance name error:"+e.getMessage());
 			this.instanceName=topic+"_"+configModel+"_"+groupName+name;
 		}
-		this.enable=Boolean.valueOf(getConfig(topic+MQConstants.PROPERTIE_SPLIT.getKey()+configModel+MQConstants.PROPERTIE_SPLIT.getKey()+MQConstants.ENABLE.getKey(),
-				getConfig(configModel+MQConstants.PROPERTIE_SPLIT.getKey()+MQConstants.ENABLE.getKey(),Boolean.toString(true))));
+		this.enable=Boolean.valueOf(getConfig(topic+MQConstants.PROPERTIE_SPLIT.getValue()+configModel+MQConstants.PROPERTIE_SPLIT.getValue()+MQConstants.CLIENT_ENABLE.getValue(),
+				getConfig(configModel+MQConstants.PROPERTIE_SPLIT.getValue()+MQConstants.CLIENT_ENABLE.getValue(),Boolean.toString(true))));
 		String flagString=null;
-		flagString=getConfig(topic+MQConstants.PROPERTIE_SPLIT.getKey()+configModel+MQConstants.PROPERTIE_SPLIT.getKey()+MQConstants.FLAG.getKey(),getConfig(configModel+MQConstants.PROPERTIE_SPLIT.getKey()+MQConstants.FLAG.getKey(),null));
+		flagString=getConfig(topic+MQConstants.PROPERTIE_SPLIT.getValue()+configModel+MQConstants.PROPERTIE_SPLIT.getValue()+MQConstants.CLIENT_FLAG.getValue(),getConfig(configModel+MQConstants.PROPERTIE_SPLIT.getValue()+MQConstants.CLIENT_FLAG.getValue(),null));
 		if(null!=flagString&&!flagString.trim().isEmpty()){
 			try{
 				flag=Double.valueOf(flagString).intValue();
@@ -73,43 +76,6 @@ public abstract class MQConfig {
 	public int getFlag() {
 		return flag;
 	}
-	protected String getConfig(String key,String defaultValue){
-		String configValue=null;
-		//先从XXXX.properties中拿值
-		configValue=ConfigLoad.getInstance().getConfig(key);
-		//如果拿不到值再从java -DXXX=XXX提取配置
-		if((null==configValue||configValue.trim().isEmpty())&&null!=System.getProperty(key)){
-			configValue=System.getProperty(key).trim();
-		}
-		//最后从环境变量中取值，由于操作系统环境变量设置.为特殊字符故需要特殊处理
-		if(null==configValue||configValue.trim().isEmpty()){
-			configValue=System.getenv(key.replace(".","_"));
-		}
-		return null==configValue||configValue.trim().isEmpty()?defaultValue:configValue;
-	}
-	private static class ConfigLoad{
-		private static ConfigLoad cLoad=new ConfigLoad();
-		private Properties properties;
-		private ConfigLoad(){
-			properties = new Properties();
-			try {
-				InputStream is=MQConfig.class.getResourceAsStream(MQConstants.PROPERTIE_FILES.getKey());
-				if(null!=is)properties.load(is);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		public String getConfig(String key){
-			try {
-				return null!=properties&&properties.containsKey(key)?properties.getProperty(key,null):null;
-			} catch (Exception e) {
-				return null;
-			}
-		}
-		public static ConfigLoad getInstance(){
-			return cLoad;
-		}
-    }
 	public void printProperties(){
 		String info="[MQConfig]nameAddr="+nameAddr+",groupName="+groupName+",instanceName="+instanceName+",configModel="+configModel+",enable="+enable+",flag="+flag;
 		logger.info(info);

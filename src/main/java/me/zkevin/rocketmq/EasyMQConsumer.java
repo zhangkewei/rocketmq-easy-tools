@@ -12,6 +12,9 @@ import com.alibaba.rocketmq.client.exception.MQClientException;
 import com.alibaba.rocketmq.common.consumer.ConsumeFromWhere;
 import com.alibaba.rocketmq.common.message.MessageExt;
 import com.alibaba.rocketmq.common.protocol.heartbeat.MessageModel;
+import me.zkevin.rocketmq.dic.DefaultClientValue;
+import me.zkevin.rocketmq.dic.MQConstants;
+
 /**
  * 消息消费者
  * 类名称：ChitMQConsumer  
@@ -20,18 +23,18 @@ import com.alibaba.rocketmq.common.protocol.heartbeat.MessageModel;
  * 创建时间：2016年12月3日 下午4:30:35
  * @version
  */
-public class EasyMQConsumer extends MQConfig {
+public class EasyMQConsumer extends MQConfig{
 	private MessageModel messageModel;//消费模式
 	private String topic;//主题
 	private String tags;//标签
 	private DefaultMQPushConsumer consumer;//真实的消费者
 	private AtomicBoolean isStart=new AtomicBoolean(false);//消费者启动状态
-	private List<ConsumerListener> listeners=new CopyOnWriteArrayList<ConsumerListener>(); 
+	private List<ConsumerListener> listeners=new CopyOnWriteArrayList<ConsumerListener>();
 	private EasyMQConsumer(String topic,String expressions) {
-		super(topic,MQConstants.CONFIG_MODEL_CONSUMER.getKey());
+		super(topic,DefaultClientValue.CONFIG_MODEL_CONSUMER.getKey());
 		this.topic=topic;
 		this.tags=expressions;
-		String model=getConfig(topic+MQConstants.PROPERTIE_SPLIT.getKey()+MQConstants.MESSAGE_MODEL.getKey(),null);
+		String model=getConfig(topic+ MQConstants.PROPERTIE_SPLIT.getValue()+ MQConstants.CLIENT_MESSAGE_MODEL.getValue(),MessageModel.CLUSTERING.name());
 		if(null!=model&&!model.trim().isEmpty()){
 			this.messageModel=MessageModel.valueOf(model.trim());
 		}
@@ -87,7 +90,7 @@ public class EasyMQConsumer extends MQConfig {
 					consumer.subscribe(this.topic,this.tags);
 					consumer.registerMessageListener(new MessageListenerConcurrently(){
 						public ConsumeConcurrentlyStatus consumeMessage(
-						List<MessageExt> messages,ConsumeConcurrentlyContext arg1) {
+								List<MessageExt> messages,ConsumeConcurrentlyContext arg1) {
 							try{
 								for(MessageExt ext:messages){
 									if(getFlag()>-1&&ext.getFlag()!=getFlag()){

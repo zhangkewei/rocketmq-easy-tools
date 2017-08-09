@@ -57,11 +57,11 @@ public class MQService {
 		String msg2Json=JSONObject.toJSONString(bodyMap);
 		SendResult result=null;
 		try{
-	        String encoder=StringUrlTools.encoderStr(msg2Json, null);
-	        result=sendMsg(new Message(topic,tag, null!=key?key.trim():"",encoder.getBytes()));
+			String encoder=StringUrlTools.encoderStr(msg2Json, null);
+			result=sendMsg(new Message(topic, tag, null != key ? key.trim() : "", encoder.getBytes()));
 		}catch(Exception e){
 			e.printStackTrace();
-			logger.error("encoding String error:"+msg2Json,e);
+			logger.error("encoding String error:" + msg2Json, e);
 		}
 		return result;
 	}
@@ -96,9 +96,13 @@ public class MQService {
 			return RODUCER_MAP.get(topic);
 		}else{
 			synchronized (RODUCER_MAP) {
-				EasyMQProducer producer=EasyMQProducer.createProducer(topic);
-				RODUCER_MAP.put(topic,producer);
-				return producer;
+				if(!RODUCER_MAP.containsKey(topic)) {
+					EasyMQProducer producer = EasyMQProducer.createProducer(topic);
+					RODUCER_MAP.put(topic, producer);
+					return producer;
+				}else{
+					return RODUCER_MAP.get(topic);
+				}
 			}
 		}
 	}
@@ -143,7 +147,7 @@ public class MQService {
 		return MQServiceHelper.MQ_SERVICE;
 	}
 	private MQService(){
-		
+
 	}
 	private static class MQServiceHelper{
 		public static MQService MQ_SERVICE=new MQService();

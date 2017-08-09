@@ -6,6 +6,8 @@ import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.common.message.Message;
 import com.alibaba.rocketmq.remoting.exception.RemotingException;
+import me.zkevin.rocketmq.dic.DefaultClientValue;
+
 /**
  * 消息生产者
  * 类名称：ChitMQProducer  
@@ -17,7 +19,7 @@ import com.alibaba.rocketmq.remoting.exception.RemotingException;
 public  class	EasyMQProducer extends MQConfig {
 	protected DefaultMQProducer producer;
 	private EasyMQProducer(String topic){
-		super(topic,MQConstants.CONFIG_MODEL_PRODUCER.getKey());
+		super(topic, DefaultClientValue.CONFIG_MODEL_PRODUCER.getKey());
 	}
 	protected static EasyMQProducer createProducer(String topic){
 		final EasyMQProducer chitProducer=new EasyMQProducer(topic);
@@ -38,10 +40,10 @@ public  class	EasyMQProducer extends MQConfig {
 			//启动生产者
 			chitProducer.producer.start();
 			Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-	            public void run() {
-	               chitProducer.producer.shutdown();
-	            }
-	        }));
+				public void run() {
+					chitProducer.producer.shutdown();
+				}
+			}));
 			logger.info("producer start successed:"+chitProducer.producer.toString());
 			chitProducer.printProperties();
 		} catch (MQClientException e) {

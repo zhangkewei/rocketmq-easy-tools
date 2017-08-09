@@ -4,7 +4,7 @@ rocketmq客户端封装，参数配置化，调用方便。
 <br/>
 <br/>
 <b>参数配置:</b><br/>
-src/resources/easymq.properties<br/>
+src/resources/mqclient.properties.all<br/>
 参数明细<br/>
 mqAddr eg:mqAddr=127.0.0.1:9876<br/>
 topic名字.mqAddr<br/>

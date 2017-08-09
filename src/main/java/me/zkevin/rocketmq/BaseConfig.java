@@ -1,6 +1,6 @@
 package me.zkevin.rocketmq;
 
-import com.chit.mqclient.dic.MQConstants;
+import me.zkevin.rocketmq.dic.MQConstants;
 
 import java.io.IOException;
 import java.io.InputStream;
